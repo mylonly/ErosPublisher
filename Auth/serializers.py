@@ -7,9 +7,9 @@
 
 import os
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from Auth.models import UserProfile
 
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
-    model = User
+    model = UserProfile
     exclude = ('password','user_permissions')
