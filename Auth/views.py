@@ -3,11 +3,15 @@ from rest_framework import generics, views
 from ErosUpdate.response import ErosResponse,ErosResponseStatus
 from django.contrib import auth
 from . import serializers
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authentication import SessionAuthentication,BasicAuthentication
 # Create your views here.
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class login(views.APIView):
-
+  authentication_classes = (BasicAuthentication,)
   def post(self, request, *args, **kwargs):
     
     username = request.data.get("username")
@@ -18,7 +22,7 @@ class login(views.APIView):
       auth.login(request, user)
       return ErosResponse()
     else:
-      return ErosResponse(ErosResponseStatus.INVALID_USER)
+      return ErosResponse(status=ErosResponseStatus.INVALID_USER)
 
 
 class logout(views.APIView):

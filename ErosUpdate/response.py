@@ -29,3 +29,9 @@ class ErosResponse(JsonResponse):
       'data':data
     }
     super(ErosResponse, self).__init__(response, status=200)
+
+    ###允许跨域
+    # self["Access-Control-Allow-Origin"] = "*"
+    # self["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+    # self["Access-Control-Max-Age"] = "1000"
+    # self["Access-Control-Allow-Headers"] = "Authorization,Origin, X-Requested-With, Content-Type, Accept"
