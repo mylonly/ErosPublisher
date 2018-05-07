@@ -7,3 +7,9 @@
 
 
 from django.urls import path
+from App.views import AppList,CreateApp
+
+urlpatterns = [
+    path('list/',AppList.as_view()),
+    path('create/',CreateApp.as_view())
+]

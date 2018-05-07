@@ -2,6 +2,7 @@ from django.shortcuts import render
 from ErosUpdate.response import ErosResponse,ErosResponseStatus
 from rest_framework import views,generics
 from App.models import App
+from Package.models import Package
 from App.serializers import AppSerializer
 
 # Create your views here.
@@ -30,4 +31,19 @@ class CreateApp(generics.CreateAPIView):
     return ErosResponse(status=ErosResponseStatus.SERIALIZED_FAILED)
 
 
+class CheckUpdate(views.APIView):
   
+  def get(self, request, *args, **kwargs):
+    appName = request.query_params['appName']
+    iosVersion = request.query_params['iOS']
+    androidVersion = request.query_params['android']
+    isDiff = request.query_params['isDiff']
+    jsVersion = request.query_params['jsVersion']
+    if app_name is None:
+      return ErosResponse(status=ErosResponseStatus.PARAMS_ERROR)
+    else:
+      try:
+        app = App.objects.get(name=appName)
+        packages = Package.objects.filter(app=app, ios=iosVersion, android=androidVersion)
+      except App.DoesNotExist:
+        return ErosResponse(status=ErosResponseStatus.NOT_FOUND)

@@ -6,10 +6,14 @@
 # @Description: App 序列化类
 
 import os
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from App.models import App
 
-class AppSerializer(ModelSerializer):
+class AppSerializer(serializers.ModelSerializer):
   class Meta:
     model = App
     fields = '__all__'
+
+class UpdateResultSerializer(serializers.Serializer):
+  diff = serializers.BooleanField()
+  path = serializers.URLField()

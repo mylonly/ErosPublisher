@@ -37,6 +37,13 @@
   ```
   python3 manager.py runserver
   ```
+  
+  6. VSCode下debug
+  
+  ```
+  #修改vscode的setting中的,具体地址为你自己对应虚拟环境的路径
+  "python.pythonPath": "~/.local/share/virtualenvs/ErosUpdate-J6EmTYWq/bin/python3",
+  ```
 
   ## 部署
 

@@ -16,16 +16,18 @@ class ErosResponseStatus(Enum):
   SERIALIZED_FAILED = ("Serialized Failed", 3)
   PARAMS_ERROR = ("Params Error", 4)
   NOT_FOUND = ("Not Found", 5)
+  EXECEPTION = ("Catch Exeception", 6)
 
 class ErosResponse(JsonResponse):
 
-  def __init__(self, data=None, status=ErosResponseStatus.OK):
+  def __init__(self, data=None, status=ErosResponseStatus.OK, detail=None):
     tips = status.value[0]
     code = status.value[1]
 
     response = {
-      'status':code,
-      'message':tips,
+      'resCode':code,
+      'msg':tips,
+      'detail':detail,
       'data':data
     }
     super(ErosResponse, self).__init__(response, status=200)

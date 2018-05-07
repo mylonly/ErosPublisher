@@ -33,6 +33,9 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'Package.apps.PackageConfig',
     'Auth.apps.AuthConfig',
+    'App.apps.AppConfig',
+    'Device.apps.DeviceConfig',
+    'Record.apps.RecordConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
