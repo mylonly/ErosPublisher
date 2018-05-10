@@ -25,7 +25,7 @@ SECRET_KEY = '6kxkv4i8@2o!&h^j2bh^s)k#4h+u$5k-0jp6cd3b*sx2_j@d$a'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localdev.com','127.0.0.1','localhost']
 
 
 # Application definition
@@ -132,8 +132,9 @@ AUTH_USER_MODEL = 'Auth.UserProfile'
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
+
 # CORS_ORIGIN_WHITELIST = (
-#     '*'
+#     'localhost:9527'
 # )
 
 CORS_ALLOW_METHODS = (
@@ -154,5 +155,17 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
     'Pragma',
-    'set-cookie'
+    'set-cookie',
+    'X-CSRFTOKEN'
+
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+}
+
+
+MEDIA_ROOT = "/Users/txg/Desktop/"
+
+UPLOAD_FILE_PATH = "/Users/txg/Downloads/"

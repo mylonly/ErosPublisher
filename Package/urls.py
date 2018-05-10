@@ -7,10 +7,12 @@
 
 
 from django.urls import path
-from Package.views import PackageList,PackageCreate,PackageDelete
+from Package.views import PackageList,PackageCreate,PackageDelete,PackageUpdate,PackageUpload
 
 urlpatterns = [
   path('list',PackageList.as_view()),
   path('create',PackageCreate.as_view()),
-  path('delete',PackageDelete.as_view())
+  path('delete',PackageDelete.as_view()),
+  path('update',PackageUpdate.as_view()),
+  path('upload',PackageUpload.as_view())
 ]

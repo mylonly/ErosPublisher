@@ -11,12 +11,13 @@ from enum import Enum,unique
 
 class ErosResponseStatus(Enum):
   OK = ("Operation Success", 0)
-  INVALID_USER = ("Login Failed", 1)
+  INVALID_USER = ("Invalid User", 1)
   UNAUTHORIZED = ("unauthorized", 2)
   SERIALIZED_FAILED = ("Serialized Failed", 3)
   PARAMS_ERROR = ("Params Error", 4)
   NOT_FOUND = ("Not Found", 5)
   EXECEPTION = ("Catch Exeception", 6)
+  UPLOAD_FAILED = ("Upload Failed", 7)
 
 class ErosResponse(JsonResponse):
 
