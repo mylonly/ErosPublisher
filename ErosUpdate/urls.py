@@ -22,5 +22,5 @@ urlpatterns = [
     path('package/',include('Package.urls')),
     path('device/',include('Device.urls')),
     path('app/',include('App.urls')),
-    path('record/',include('Record.urls'))
+    path('release/',include('Release.urls'))
 ]

@@ -95,7 +95,7 @@ class PackageUpload(views.APIView):
 
       responseData = {
         "appName": jsonObj['appName'],
-        "md5": jsonObj['jsVersion'],
+        "jsMD5": jsonObj['jsVersion'],
         "android": jsonObj['android'],
         "ios": jsonObj['iOS'],
         "timestamp": jsonObj['timestamp'],

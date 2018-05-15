@@ -10,14 +10,16 @@ from django.http import JsonResponse
 from enum import Enum,unique
 
 class ErosResponseStatus(Enum):
-  OK = ("Operation Success", 0)
-  INVALID_USER = ("Invalid User", 1)
-  UNAUTHORIZED = ("unauthorized", 2)
-  SERIALIZED_FAILED = ("Serialized Failed", 3)
-  PARAMS_ERROR = ("Params Error", 4)
-  NOT_FOUND = ("Not Found", 5)
-  EXECEPTION = ("Catch Exeception", 6)
-  UPLOAD_FAILED = ("Upload Failed", 7)
+  OK = ("操作成功", 0)
+  INVALID_USER = ("不合法用户", 1)
+  UNAUTHORIZED = ("未认证", 2)
+  SERIALIZED_FAILED = ("序列化失败", 3)
+  PARAMS_ERROR = ("参数错误", 4)
+  NOT_FOUND = ("不存在", 5)
+  EXECEPTION = ("捕获到异常", 6)
+  UPLOAD_FAILED = ("上传失败", 7)
+  IS_LASTEST_PACKAGE = ("已经是最新的包,不需要更新", 4000)
+  PACKAGE_NOT_FOUND = ("更新包找不着", 4001)
 
 class ErosResponse(JsonResponse):
 

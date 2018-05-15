@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'Auth.apps.AuthConfig',
     'App.apps.AppConfig',
     'Device.apps.DeviceConfig',
-    'Record.apps.RecordConfig',
+    'Release.apps.ReleaseConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
