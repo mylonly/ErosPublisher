@@ -79,7 +79,7 @@ class PackageDelete(generics.GenericAPIView):
       except Package.DoesNotExist:
         return ErosResponse(status=ErosResponseStatus.NOT_FOUND)
 
-
+@method_decorator(csrf_exempt, name="dispatch")
 class PackageUpload(views.APIView):
   parser_classes = (MultiPartParser,)
   def post(self, request, *args, **kwargs):
