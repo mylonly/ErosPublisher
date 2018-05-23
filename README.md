@@ -71,4 +71,18 @@
 
   ## 部署
 
-    * [ ] TODO
+    1. 根据自己项目的实际情况修改项目根目录下的uwsgi.ini
+    2. 在虚拟环境中执行
+
+      ```
+      uwsgi -i uwsgi.ini
+      ```
+    3. 修改nginx配置文件
+
+      ```
+       location / {
+            uwsgi_pass 127.0.0.1:3030;
+            include uwsgi_params;
+        }
+      ```
+    4. 重启nginx
