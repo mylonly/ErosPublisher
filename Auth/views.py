@@ -6,12 +6,14 @@ from . import serializers
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authentication import SessionAuthentication,BasicAuthentication
+from rest_framework.permissions import AllowAny
 # Create your views here.
 
 
 @method_decorator(csrf_exempt, name="dispatch")
 class login(views.APIView):
   authentication_classes = (BasicAuthentication,)
+  permission_classes = (AllowAny,)
   def post(self, request, *args, **kwargs):
     
     username = request.data.get("username")

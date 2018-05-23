@@ -10,13 +10,24 @@
 
 from rest_framework import serializers
 from Release.models import Record, Release
+from django_filters import FilterSet
 
 class RecrodSerializer(serializers.ModelSerializer):
   class Meta:
     model = Record
     exclude = ('ip','area')
 
-  
+
+class RecordFilter(FilterSet):
+  class Meta:
+    model = Record
+    fields = {
+      'appName': ['exact'],
+      'appPlatform': ['exact'],
+      'jsVersion': ['exact'],
+      'appVersion': ['exact'],
+      'updateTime':['date__gte','date__lte']
+    }
   
 
 class ReleaseSerializer(serializers.ModelSerializer):

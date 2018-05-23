@@ -7,11 +7,14 @@
 
 
 from django.urls import path
-from Release.views import CheckUpdate,RecordList,AddRelease,ReleaseList
+from Release.views import CheckUpdate,RecordList,AddRelease,ReleaseList,ReleaseUpdate,QueryReleaseProgress,DeleteRelease
 
 urlpatterns = [
   path('check',CheckUpdate.as_view()),
   path('list',ReleaseList.as_view()),
   path('add', AddRelease.as_view()),
-  path('records', RecordList.as_view())
+  path('update', ReleaseUpdate.as_view()),
+  path('records', RecordList.as_view()),
+  path('progress',QueryReleaseProgress.as_view()),
+  path('delete', DeleteRelease.as_view())
 ]

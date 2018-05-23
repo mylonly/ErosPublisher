@@ -5,151 +5,34 @@ from App.models import App
 from Device.models import Device
 from Package.models import Package
 from Release.models import Record, Release
-from Release.serializers import RecrodSerializer, ReleaseSerializer
+from Release.serializers import RecrodSerializer, ReleaseSerializer, RecordFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework.serializers import ValidationError
 import bsdiff4
-from ErosUpdate.settings import MEDIA_ROOT
+from ErosUpdate.settings import MEDIA_ROOT,MEDIA_URL
 import os.path
 import logging
+from rest_framework.permissions import AllowAny
 # Create your views here.
 
-
-class RecordUpdate(generics.GenericAPIView):
-
-  serializer_class = RecrodSerializer
-
+class RecordStatistics(generics.GenericAPIView):
   def post(self, request, *args, **kwargs):
-   
-      appName = request.data.get('appName')
-      deviceToken = request.data.get('deviceToken')
-      appPlatform = request.data.get('appPlatform')
-      appVersion = request.data.get('appVersion')
-      jsMD5 = request.data.get('jsMD5')
-      isDiff = request.data.get('isDiff')
-      if appName is None or deviceToken is None or appPlatform is None or appVersion is None:
-        return ErosResponse(status=ErosResponseStatus.PARAMS_ERROR)
-      try:
-        record = None
-        package = None
-        records = Record.objects.filter(appName=appName, deviceToken=deviceToken)
-        if len(records) > 0:
-          record = records[0]
-          updateJSVersion = record.updateJSVersion
-          serializer= self.get_serializer(record, data=request.data)
-          if serializer.is_valid():
-            record = serializer.save()
-            oldPackages = Package.objects.filter(appName=appName,jsMD5=jsMD5)
-            if len(oldPackages) > 0:
-              record.jsVersion = oldPackages[0].jsVersion
-            record.save()
-          else:
-            raise ValidationError("Params Error, Serializer Failed!!!")
-          package = self.lastPackage(appName, appPlatform, appVersion, updateJSVersion)
-        else:
-          serializer = self.get_serializer(data=request.data)
-          if serializer.is_valid():
-            record = serializer.save()
-            oldPackages = Package.objects.filter(appName=appName,jsMD5=jsMD5)
-            if len(oldPackages) > 0:
-              record.jsVersion = oldPackages[0].jsVersion
-            package = self.lastPackage(appName, appPlatform, appVersion)
-            record.updateJSVersion = package.jsVersion
-            record.save()
-          else:
-            raise ValidationError("Params Error, Serializer Failed!!!")
-
-        if jsMD5 != package.jsMD5 and isDiff: #生成增量包
-          (isDiff,jsPath) = self.diffPakagePath(jsMD5,package.jsMD5)
-          resData = {
-            "diff":isDiff,
-            "path":jsPath,
-            "showUpdateAlert":package.showUpdateAlert,
-            "changelog":package.changelog,
-          }
-          return ErosResponse(data=resData)
-        elif not isDiff:
-          resData = {
-            "diff":False,
-            "path":package.jsPath,
-            "showUpdateAlert":package.showUpdateAlert,
-            "changelog":package.changelog,
-          }
-          return ErosResponse(data=resData)
-        else:
-          return ErosResponse(status=ErosResponseStatus.IS_LASTEST_PACKAGE)
-      except Package.DoesNotExist as e:
-        return ErosResponse(status=ErosResponseStatus.NOT_FOUND,detail=str(e))
-      except NameError as e:
-        return ErosResponse(status=ErosResponseStatus.NOT_FOUND, detail=str(e))
-      except ValidationError as e:
-        return ErosResponse(status=ErosResponseStatus.SERIALIZED_FAILED,detail=str(e))
-
-  def lastPackage(self, appName, appPlatform, appVersion, jsVersion=None):
-    package = None
-    packages = None
-    if appPlatform == 'iOS':
-      packages = Package.objects.filter(appName=appName, published=True, ios=appVersion)
-    elif appPlatform == 'Android':
-      packages = Package.objects.filter(appName=appName, published=True, android=appVersion)
-    else:
-      raise NameError("UnSupport Platform[%s]" % (appPlatform))
-
-    packages = packages.order_by('-timestamp')
-
-    if(jsVersion):
-      packages = packages.filter(jsVersion=jsVersion)
-    
-    if len(packages) > 0:
-      package = packages[0]
-    else:
-      raise Package.DoesNotExist("Package Does Not Found")
-    
-    return package
-
-  def diffPackage(oldMD5,newMD5):
-    
-    diffZip = MEDIA_ROOT+oldMD5+'+'+newMD5+'.zip'
-
-    oldZip = MEDIA_ROOT + oldMD5 + '.zip'
-    newZip = MEDIA_ROOT + newMD5 + '.zip'
-
-    #先判断diff文件存不存在,存在说明之前生成过这个增量包，直接返回
-    exsit = os.path.isfile(diffZip) 
-    if exsit:
-      return (True,diffZip)
-
-    #判断老的js包存不存在，不存在返回最新全量包的地址
-    exsit = os.path.isfile(oldZip) 
-    if not exsit:
-      return (False,newZip)
-
-    exsit = os.path.isfile(newZip)
-    if not exsit:
-      return (False,None)
-
-    oldZipFile = open(oldZip, 'rb')
-    oldZipBytes = oldZipFile.read()
-    oldZipFile.close()
-
-    newZipFile = open(newZip, 'rb')
-    newZipBytes = newZipFile.read()
-    newZipFile.close()
-
-    diffZipBytes = bsdiff4(oldZipBytes, newZipBytes)
-    diffZipFile = open(diffZip, 'wb')
-    diffZipFile.write(diffZipBytes)
-    diffZipFile.close
-    return (True, diffZip)
+    appName = request.get('appName')
+    requestType = request.get('type')
+    if requestType is None or appName is None:
+      return ErosResponse(status=ErosResponseStatus.PARAMS_ERROR, detail="missing params, maybe appName or requestType")
+    if requestType == 'jsVersion':
+    else if requestType == ''
 
 
-class RecordList(generics.GenericAPIView):
+class RecordList(generics.ListAPIView):
   queryset = Record.objects.all()
   serializer_class = RecrodSerializer
   filter_backends = (DjangoFilterBackend,OrderingFilter)
   filter_fields = '__all__'
   ordering_fields = ('id', 'updatetime')
+  filter_class = RecordFilter
 
   def get(self, request, *args, **kwargs):
     queryset = self.filter_queryset(self.get_queryset())
@@ -163,7 +46,31 @@ class RecordList(generics.GenericAPIView):
     return ErosResponse(data=serializer.data)
 
 
+class QueryReleaseProgress(generics.GenericAPIView):
+  def post(self, request, *args, **kwargs):
+    appName = request.data.get('appName')
+    iOS = request.data.get('iOS')
+    android = request.data.get('android')
+    jsVersion = request.data.get('jsVersion')
+    if appName is None or iOS is None or android is None or jsVersion is None:
+      return ErosResponse(status=ErosResponseStatus.PARAMS_ERROR, detail="params is missing, maybe is appName,iOS or android")
+    
+    iOS_Records = Record.objects.filter(appName=appName,appPlatform='iOS',appVersion=iOS)
+    android_Records = Record.objects.filter(appName=appName, appPlatform='Android', appVersion=android)
 
+    iOS_Updated_Records = Record.objects.filter(appName=appName,appPlatform='iOS',appVersion=iOS,jsVersion=jsVersion)
+    android_Updated_Records = Record.objects.filter(appName=appName, appPlatform='Android', appVersion=android, jsVersion=jsVersion)
+
+
+    resData = {
+      'total':len(iOS_Records) + len(android_Records),
+      'totalUpdated':len(iOS_Updated_Records) + len(android_Updated_Records),
+      'iOS':len(iOS_Records),
+      'iOSUpdated':len(iOS_Updated_Records),
+      'Android':len(android_Records),
+      "AndroidUpdate":len(android_Updated_Records)
+    }
+    return ErosResponse(data=resData)
 
 class AddRelease(generics.CreateAPIView):
   serializer_class = ReleaseSerializer
@@ -174,6 +81,40 @@ class AddRelease(generics.CreateAPIView):
       return ErosResponse(data=serializer.data)
     return ErosResponse(status=ErosResponseStatus.SERIALIZED_FAILED,detail=serializer.errors)
 
+class DeleteRelease(generics.GenericAPIView):
+  def post(self, request, *args, **kwargs):
+    ID = request.data.get("id")
+    if ID == None:
+      return ErosResponse(data=None, status=ErosResponseStatus.PARAMS_ERROR)
+    else:
+      try:
+        release = Release.objects.get(id=ID)
+        release.delete()
+        return ErosResponse()
+      except Release.DoesNotExist:
+        return ErosResponse(status=ErosResponseStatus.NOT_FOUND)
+
+class ReleaseUpdate(generics.GenericAPIView):
+  serializer_class = ReleaseSerializer
+  def post(self, request, *args, **kwargs):
+    ID = request.data["id"]
+    if ID is None:
+      return ErosResponse(status=ErosResponseStatus.PARAMS_ERROR, detail="param [id] is missing...")
+    try:
+      instance = Release.objects.get(id=ID)
+      partial = kwargs.pop('partial', False)
+      serializer = self.get_serializer(instance, data=request.data, partial=partial)
+      if serializer.is_valid():
+         serializer.save()
+         return ErosResponse(data=serializer.data)
+      else:
+        return ErosResponse(status=ErosResponseStatus.SERIALIZED_FAILED, detail=serializer.errors)
+      if getattr(instance, '_prefetched_objects_cache', None):
+          # If 'prefetch_related' has been applied to a queryset, we need to
+          # forcibly invalidate the prefetch cache on the instance.
+          instance._prefetched_objects_cache = {}
+    except Package.DoesNotExist:
+      return ErosResponse(status=ErosResponseStatus.NOT_FOUND, detail="Release not found")
 
 class ReleaseList(generics.ListAPIView):
   queryset = Release.objects.all()
@@ -193,6 +134,7 @@ class ReleaseList(generics.ListAPIView):
     return ErosResponse(data=serializer.data) 
 
 class CheckUpdate(generics.GenericAPIView):
+  permission_classes = (AllowAny,)
 
   def get(self, requset, *args, **kwargs):
     return self.handleRequest(requset)
@@ -220,15 +162,21 @@ class CheckUpdate(generics.GenericAPIView):
         data['deviceToken'] = ip
         data['ip'] = ip
 
-    jsVersion = Release.gotHit(data) #获取命中的更新包
-    if not jsVersion:
+    appName = data['appName']
+    jsMD5 = data['jsMD5']
+    oldPackages = Package.objects.filter(jsMD5=jsMD5)
+    if len(oldPackages) > 0 :
+      data['jsVersion'] = oldPackages[0].jsVersion
+    release = Release.gotHit(data) #获取命中的更新包
+    if not release:
       return ErosResponse(status=ErosResponseStatus.IS_LASTEST_PACKAGE)
-    data['updateJSVersion'] = jsVersion
+    data['updateJSVersion'] = release.jsVersion
     
+
     self.updateRecord(data)  #更新记录
 
     try:
-      package = Package.objects.get(jsVersion=jsVersion)
+      package = Package.objects.get(appName=appName, jsVersion=release.jsVersion)
       newMD5 = package.jsMD5
       oldMD5 = data['jsMD5']
       isDiff = data['isDiff']
@@ -236,13 +184,14 @@ class CheckUpdate(generics.GenericAPIView):
       if newMD5 == oldMD5:
         return ErosResponse(status=ErosResponseStatus.IS_LASTEST_PACKAGE)
       if isDiff:
-        (isDiff, jsPath) = self.diffPackage(oldMD5,newMD5)
+        (isDiff, jsPath) = self.diffPackage(oldMD5,newMD5,'http://'+requset.get_host()+MEDIA_URL)
       
       resData = {
           "diff":isDiff,
           "path":jsPath,
-          "showUpdateAlert":package.showUpdateAlert,
-          "changelog":package.changelog,
+          "showUpdateAlert":release.showUpdateAlert,
+          "isForceUpdate":release.isForceUpdate,
+          "changelog":release.changelog,
       }
       return ErosResponse(data=resData)
 
@@ -304,43 +253,33 @@ class CheckUpdate(generics.GenericAPIView):
     else:
       return (False,None)
   
-  def diffPackage(self, oldMD5, newMD5):
+  def diffPackage(self, oldMD5, newMD5, prefix):
     
-    diffZip = MEDIA_ROOT+oldMD5+'+'+newMD5+'.zip'
+    diffZipName = oldMD5+'-'+newMD5+'.zip'
+    diffZipPath = MEDIA_ROOT+diffZipName
 
-    oldZip = MEDIA_ROOT + oldMD5 + '.zip'
-    newZip = MEDIA_ROOT + newMD5 + '.zip'
+    oldZipName = oldMD5 + '.zip'
+    oldZipPath = MEDIA_ROOT+oldZipName
+
+    newZipName = newMD5 + '.zip'
+    newZipPath = MEDIA_ROOT + newZipName
 
     #先判断diff文件存不存在,存在说明之前生成过这个增量包，直接返回
-    exsit = os.path.isfile(diffZip) 
+    exsit = os.path.isfile(diffZipPath) 
     if exsit:
-      return (True,diffZip)
+      return (True,prefix+diffZipName)
 
     #判断老的js包存不存在，不存在返回最新全量包的地址
-    exsit = os.path.isfile(oldZip) 
+    exsit = os.path.isfile(oldZipPath) 
     if not exsit:
-      return (False,newZip)
+      return (False,prefix + newZipName)
 
-    exsit = os.path.isfile(newZip)
+    exsit = os.path.isfile(newZipPath)
     if not exsit:
       return (False,None)
 
-    oldZipFile = open(oldZip, 'rb')
-    oldZipBytes = oldZipFile.read()
-    oldZipFile.close()
-
-    newZipFile = open(newZip, 'rb')
-    newZipBytes = newZipFile.read()
-    newZipFile.close()
-
-    diffZipBytes = bsdiff4(oldZipBytes, newZipBytes)
-    diffZipFile = open(diffZip, 'wb')
-    diffZipFile.write(diffZipBytes)
-    diffZipFile.close
-    return (True, diffZip)
-
-    
-    
+    bsdiff4.file_diff(oldZipPath, newZipPath, diffZipPath)
+    return (True, prefix + diffZipName)
 
 
         

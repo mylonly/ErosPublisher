@@ -7,10 +7,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework.parsers import FileUploadParser,MultiPartParser
 import zipfile
-from ErosUpdate.settings import MEDIA_ROOT
+from ErosUpdate.settings import MEDIA_ROOT,MEDIA_URL
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import json
+from rest_framework.permissions import AllowAny
 # Create your views here.
 
 
@@ -40,7 +41,7 @@ class PackageCreate(generics.CreateAPIView):
     if serializer.is_valid():
       serializer.save()
       return ErosResponse(data=serializer.data)
-    return ErosResponse(status=ErosResponseStatus.SERIALIZED_FAILED)
+    return ErosResponse(status=ErosResponseStatus.SERIALIZED_FAILED, detail=serializer.errors)
 
   
 class PackageUpdate(generics.GenericAPIView):
@@ -99,9 +100,25 @@ class PackageUpload(views.APIView):
         "android": jsonObj['android'],
         "ios": jsonObj['iOS'],
         "timestamp": jsonObj['timestamp'],
-        "jsPath": jsonObj['jsPath']+file.name 
+        "jsPath": 'http://'+request.get_host()+MEDIA_URL+file.name
       }
       zfile.close()
       return ErosResponse(data=responseData)
     except Exception as e:
       return ErosResponse(status=ErosResponseStatus.UPLOAD_FAILED,detail=str(e))
+
+class PackageVersion(generics.GenericAPIView):
+  serializer_class = PackageSerializer
+  permission_classes = (AllowAny,)
+
+  def get(self, request, *args, **kwargs):
+    jsMD5 = request.query_params.get('jsMD5')
+    if not jsMD5:
+      return ErosResponse(status=ErosResponseStatus.PARAMS_ERROR, detail='missing jsMD5')
+    
+    try:
+      queryset = Package.objects.get(jsMD5=jsMD5)
+      serializer = self.get_serializer(queryset)
+      return ErosResponse(data=serializer.data)
+    except Package.DoesNotExist:
+      return ErosResponse(status=ErosResponseStatus.NOT_FOUND, detail='Package [%s] Not Found' % (jsMD5))

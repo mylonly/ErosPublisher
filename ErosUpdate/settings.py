@@ -25,7 +25,7 @@ SECRET_KEY = '6kxkv4i8@2o!&h^j2bh^s)k#4h+u$5k-0jp6cd3b*sx2_j@d$a'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localdev.com','127.0.0.1','localhost']
+ALLOWED_HOSTS = ['localdev.com','127.0.0.1','localhost','192.168.2.248']
 
 
 # Application definition
@@ -112,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -162,10 +162,16 @@ CORS_ALLOW_HEADERS = (
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'PAGE_SIZE':20,
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S'
+
 }
 
 
 MEDIA_ROOT = "/Users/txg/Desktop/"
 
-UPLOAD_FILE_PATH = "/Users/txg/Downloads/"
+MEDIA_URL = "/media/"
