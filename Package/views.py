@@ -13,6 +13,7 @@ from django.core.files.base import ContentFile
 import json
 from rest_framework.permissions import AllowAny
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
