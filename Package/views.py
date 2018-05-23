@@ -12,6 +12,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import json
 from rest_framework.permissions import AllowAny
+from django.utils.decorators import method_decorator
 # Create your views here.
 
 
