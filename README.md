@@ -2,9 +2,33 @@
 
 ## 安装
 
-  前提环境：`Python3.6`,`Pipenv`
+  前提环境：`CentOS`,`Python3.6`,`Pipenv`
 
   > 关于pipenv，可以参考[使用pipenv管理python虚拟环境](https://vimiix.com/post/2018/03/11/manage-your-virtualenv-with-pipenv/)
+
+  ###安装Python3.6、Pipenv
+
+    1. 安装依赖
+    
+      ```Bash
+      yum -y install sqlite-devel
+      yum install -y bzip2*
+      ```
+    2. 编译安装Python3.6
+
+      ```Bash
+      wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz
+      tar -zvxf Python-3.6.5.tgz
+      cd Python-3.6.5
+      ./configure --enable-loadable-sqlite-extensions --enable-optimizations
+      make
+      make install
+      ```
+    3. 安装Pipenv 
+
+      ```Bash
+      pip3 install pipenv
+      ```
   
   1. 下载代码
 
