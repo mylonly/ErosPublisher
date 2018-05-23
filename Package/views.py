@@ -14,7 +14,6 @@ import json
 from rest_framework.permissions import AllowAny
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authentication import SessionAuthentication,BasicAuthentication
 
 # Create your views here.
 
@@ -85,7 +84,6 @@ class PackageDelete(generics.GenericAPIView):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class PackageUpload(views.APIView):
-  authentication_classes = (BasicAuthentication,)
   parser_classes = (MultiPartParser,)
   def post(self, request, *args, **kwargs):
 
