@@ -83,6 +83,7 @@ class PackageDelete(generics.GenericAPIView):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class PackageUpload(views.APIView):
+  authentication_classes = (BasicAuthentication,)
   parser_classes = (MultiPartParser,)
   def post(self, request, *args, **kwargs):
 
