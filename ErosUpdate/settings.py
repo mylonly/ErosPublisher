@@ -172,6 +172,6 @@ REST_FRAMEWORK = {
 }
 
 
-MEDIA_ROOT = "/Users/txg/Desktop/"
+MEDIA_ROOT = "/data/media/"
 
 MEDIA_URL = "/media/"
