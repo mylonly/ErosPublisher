@@ -16,16 +16,6 @@ import logging
 from rest_framework.permissions import AllowAny
 # Create your views here.
 
-class RecordStatistics(generics.GenericAPIView):
-  def post(self, request, *args, **kwargs):
-    appName = request.get('appName')
-    requestType = request.get('type')
-    if requestType is None or appName is None:
-      return ErosResponse(status=ErosResponseStatus.PARAMS_ERROR, detail="missing params, maybe appName or requestType")
-    if requestType == 'jsVersion':
-    else if requestType == ''
-
-
 class RecordList(generics.ListAPIView):
   queryset = Record.objects.all()
   serializer_class = RecrodSerializer
