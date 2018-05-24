@@ -56,6 +56,7 @@ class Release(models.Model):
       return None
     for release in releases:
       if release.filterType == 0: #按灰度值来决定是否匹配
+        ##TODO: 判断当前的更新率是否已经达到灰度值，如果达到，不再掷骰子
         randomGrayscale = random.random()
         if randomGrayscale <= release.grayScale:
           return release

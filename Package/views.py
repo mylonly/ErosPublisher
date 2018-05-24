@@ -2,6 +2,7 @@ from django.shortcuts import render
 from ErosUpdate.response import ErosResponse,ErosResponseStatus
 from rest_framework import views,generics
 from Package.models import Package
+from Release.models import Release
 from Package.serializers import PackageSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
@@ -75,7 +76,11 @@ class PackageDelete(generics.GenericAPIView):
     else:
       try:
         package = Package.objects.get(id=package_id)
+        jsVersion = package.jsVersion
+        releases = Release.objects.filter(jsVersion=jsVersion)
         package.delete()
+        for release in releases:
+          release.delete()
         return ErosResponse()
       except Package.DoesNotExist:
         return ErosResponse(status=ErosResponseStatus.NOT_FOUND)
@@ -86,6 +91,9 @@ class PackageUpload(views.APIView):
 
     try:
       file = request.FILES['file']
+
+      if default_storage.exists(file.name):
+        default_storage.delete(file.name)
       default_storage.save(file.name, ContentFile(file.read()))
       zfile = zipfile.ZipFile(MEDIA_ROOT+file.name)
       

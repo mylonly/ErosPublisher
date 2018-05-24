@@ -74,7 +74,7 @@ class AddRelease(generics.CreateAPIView):
 class DeleteRelease(generics.GenericAPIView):
   def post(self, request, *args, **kwargs):
     ID = request.data.get("id")
-    if ID == None:
+    if ID is None:
       return ErosResponse(data=None, status=ErosResponseStatus.PARAMS_ERROR)
     else:
       try:
@@ -84,6 +84,20 @@ class DeleteRelease(generics.GenericAPIView):
       except Release.DoesNotExist:
         return ErosResponse(status=ErosResponseStatus.NOT_FOUND)
 
+class DeleteReleaseByPackage(generics.GenericAPIView):
+  def post(self, request, *args, **kwargs):
+      jsMD5 = request.data.get("jsMD5")
+      if jsMD5 is None:
+        return ErosResponse(data=None, status=ErosResponseStatus.PARAMS_ERROR)
+      else:
+        try:
+          releases = Release.objects.filter(jsMD5=jsMD5)
+          for release in releases:
+            release.delete()
+          return ErosResponse()
+        except Release.DoesNotExist:
+          return ErosResponse(status=ErosResponseStatus.NOT_FOUND)
+          
 class ReleaseUpdate(generics.GenericAPIView):
   serializer_class = ReleaseSerializer
   def post(self, request, *args, **kwargs):
