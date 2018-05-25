@@ -192,7 +192,7 @@ class CheckUpdate(generics.GenericAPIView):
       
       resData = {
           "diff":isDiff,
-          "path":jsPath,
+          "path":'http://'+requset.get_host()+MEDIA_URL+oldMD5+'.zip',
           "showUpdateAlert":release.showUpdateAlert,
           "isForceUpdate":release.isForceUpdate,
           "changelog":release.changelog,
