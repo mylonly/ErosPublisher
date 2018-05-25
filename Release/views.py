@@ -240,7 +240,7 @@ class CheckUpdate(generics.GenericAPIView):
         appPlatform = None
     isDiff = requestData.get('isDiff')
 
-    if appName and jsMD5 and appPlatform and appVersion and isDiff:
+    if appName and jsMD5 and appPlatform and appVersion and isDiff not None:
       validate_data = {
         'appName': appName,
         'jsMD5': jsMD5,
