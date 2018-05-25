@@ -184,7 +184,7 @@ class CheckUpdate(generics.GenericAPIView):
       newMD5 = package.jsMD5
       oldMD5 = data['jsMD5']
       isDiff = data['isDiff']
-      jsPath = 'http://weexcdn.1234tv.com'+MEDIA_URL+oldMD5+'.zip'
+      jsPath = 'http://weexcdn.1234tv.com'+MEDIA_URL+newMD5+'.zip'
       if newMD5 == oldMD5:
         return ErosResponse(status=ErosResponseStatus.IS_LASTEST_PACKAGE)
       if isDiff:
@@ -194,7 +194,7 @@ class CheckUpdate(generics.GenericAPIView):
       resData = {
           "diff":isDiff,
           # "path":'http://'+requset.get_host()+MEDIA_URL+oldMD5+'.zip',
-          "path":jsPath,
+          "path":,
           "showUpdateAlert":release.showUpdateAlert,
           "isForceUpdate":release.isForceUpdate,
           "changelog":release.changelog,
