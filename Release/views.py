@@ -10,7 +10,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework.serializers import ValidationError
 import bsdiff4
-from ErosUpdate.settings import MEDIA_ROOT,MEDIA_URL
+from ErosUpdate.settings import MEDIA_ROOT,MEDIA_URL,DOWNLOAD_HOST
 import os.path
 import logging
 from rest_framework.permissions import AllowAny
@@ -35,6 +35,34 @@ class RecordList(generics.ListAPIView):
     serializer = self.get_serializer(queryset, many=True)
     return ErosResponse(data=serializer.data)
 
+class UpdateRecord(generics.GenericAPIView):
+  serializer_class = RecrodSerializer
+  def post(self, request, *args, **kwargs):
+    ID = request.data["id"]
+    if ID is None:
+      return ErosResponse(status=ErosResponseStatus.PARAMS_ERROR, detail="param [id] is missing...")
+    try:
+      instance = Record.objects.get(id=ID)
+      partial = kwargs.pop('partial', False)
+      serializer = self.get_serializer(instance, data=request.data, partial=partial)
+      if serializer.is_valid():
+         serializer.save()
+         return ErosResponse(data=serializer.data)
+      else:
+        return ErosResponse(status=ErosResponseStatus.SERIALIZED_FAILED, detail=serializer.errors)
+      if getattr(instance, '_prefetched_objects_cache', None):
+          # If 'prefetch_related' has been applied to a queryset, we need to
+          # forcibly invalidate the prefetch cache on the instance.
+          instance._prefetched_objects_cache = {}
+    except Record.DoesNotExist:
+      return ErosResponse(status=ErosResponseStatus.NOT_FOUND, detail="Record not found")
+
+class GetAllJSVersion(generics.GenericAPIView):
+  serializer_class = RecrodSerializer
+  def get(self, request, *args, **kwargs):
+    records = Record.objects.order_by('jsVersion').distinct('jsVersion').values_list('jsVersion')
+    serializer = self.get_serializer(records, many=True)
+    return ErosResponse(data=serializer.data)
 
 class QueryReleaseProgress(generics.GenericAPIView):
   def post(self, request, *args, **kwargs):
@@ -117,7 +145,7 @@ class ReleaseUpdate(generics.GenericAPIView):
           # If 'prefetch_related' has been applied to a queryset, we need to
           # forcibly invalidate the prefetch cache on the instance.
           instance._prefetched_objects_cache = {}
-    except Package.DoesNotExist:
+    except Release.DoesNotExist:
       return ErosResponse(status=ErosResponseStatus.NOT_FOUND, detail="Release not found")
 
 class ReleaseList(generics.ListAPIView):
@@ -184,12 +212,12 @@ class CheckUpdate(generics.GenericAPIView):
       newMD5 = package.jsMD5
       oldMD5 = data['jsMD5']
       isDiff = data['isDiff']
-      jsPath = 'http://weexcdn.1234tv.com'+MEDIA_URL+newMD5+'.zip'
+      jsPath = DOWNLOAD_HOST+MEDIA_URL+newMD5+'.zip'
       if newMD5 == oldMD5:
         return ErosResponse(status=ErosResponseStatus.IS_LASTEST_PACKAGE)
       if isDiff:
         # (isDiff, jsPath) = self.diffPackage(oldMD5,newMD5,'http://'+requset.get_host()+MEDIA_URL)
-        (isDiff, jsPath) = self.diffPackage(oldMD5,newMD5,'http://weexcdn.1234tv.com'+MEDIA_URL)
+        (isDiff, jsPath) = self.diffPackage(oldMD5,newMD5,DOWNLOAD_HOST+MEDIA_URL)
 
       resData = {
           "diff":isDiff,

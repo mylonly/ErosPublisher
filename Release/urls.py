@@ -7,7 +7,7 @@
 
 
 from django.urls import path
-from Release.views import CheckUpdate,RecordList,AddRelease,ReleaseList,ReleaseUpdate,QueryReleaseProgress,DeleteRelease,DeleteReleaseByPackage
+from Release.views import CheckUpdate,RecordList,AddRelease,ReleaseList,ReleaseUpdate,QueryReleaseProgress,DeleteRelease,DeleteReleaseByPackage,UpdateRecord,GetAllJSVersion
 
 urlpatterns = [
   path('check',CheckUpdate.as_view()),
@@ -15,7 +15,9 @@ urlpatterns = [
   path('add', AddRelease.as_view()),
   path('update', ReleaseUpdate.as_view()),
   path('records', RecordList.as_view()),
+  path('recordmemo', UpdateRecord.as_view()),
   path('progress',QueryReleaseProgress.as_view()),
   path('delete', DeleteRelease.as_view()),
-  path('deleteByPackage', DeleteReleaseByPackage.as_view())
+  path('deleteByPackage', DeleteReleaseByPackage.as_view()),
+  path('jsVersions', GetAllJSVersion.as_view())
 ]

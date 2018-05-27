@@ -19,8 +19,27 @@ class Record(models.Model):
   updateTime = models.DateTimeField(auto_now=True)
   ip = models.CharField(max_length=100)
   area = models.CharField(max_length=100, null=True)
-  
+  memo = models.CharField(max_length=100, null=True) #备注
 
+  @classmethod
+  def getiOSUpdateProcess(iOSVersion,appName,jsVersion):
+    total = Record.objects.filter(appPlatform='iOS', appVersion=ios_verion, appName=appName)
+    updated = total.filter(jsVersion=jsVersion)
+    return (len(updated), len(total))
+
+  @classmethod
+  def getAndroidUpdateProcess(AndroidVersion, appName, jsVersion):
+    total = Record.objects.filter(appPlatform='Android', appVersion=AndroidVersion, appName=appName)
+    updated = total.filter(jsVersion=jsVersion)
+    return (len(updated), len(total))
+
+  @classmethod
+  def getTestUpdateProcess(devices,jsVersion):
+    total = Record.objects.filter(deviceToken_in=devices)
+    updated = total.filter(jsVersion=jsVersion)
+    return (len(updated), len(total))
+
+  
 
 class Release(models.Model):
 
@@ -57,9 +76,15 @@ class Release(models.Model):
     for release in releases:
       if release.filterType == 0: #按灰度值来决定是否匹配
         ##TODO: 判断当前的更新率是否已经达到灰度值，如果达到，不再掷骰子
-        randomGrayscale = random.random()
-        if randomGrayscale <= release.grayScale:
-          return release
+        (iOS_updated, iOS_total) = Record.getiOSUpdateProcess(release.iOS,release.appName,release.jsVersion)
+        (Android_updated, Android_total) = Record.getAndroidUpdateProcess(release.android, release.appName, release.jsVersion)
+        total = iOS_total + Android_total
+        updated = iOS_updated + Android_updated
+        process = float(updated/total)
+        if process < release.grayScale:
+          randomGrayscale = random.random()
+          if randomGrayscale <= release.grayScale:
+            return release
       elif release.filterType == 1: #根据指定设备来匹配
         if release.deviceIDs.find(deviceToken) != -1:
           return release      
