@@ -22,19 +22,19 @@ class Record(models.Model):
   memo = models.CharField(max_length=100, null=True) #备注
 
   @classmethod
-  def getiOSUpdateProcess(iOSVersion,appName,jsVersion):
+  def getiOSUpdateProcess(cls,iOSVersion,appName,jsVersion):
     total = Record.objects.filter(appPlatform='iOS', appVersion=ios_verion, appName=appName)
     updated = total.filter(jsVersion=jsVersion)
     return (len(updated), len(total))
 
   @classmethod
-  def getAndroidUpdateProcess(AndroidVersion, appName, jsVersion):
+  def getAndroidUpdateProcess(cls,AndroidVersion, appName, jsVersion):
     total = Record.objects.filter(appPlatform='Android', appVersion=AndroidVersion, appName=appName)
     updated = total.filter(jsVersion=jsVersion)
     return (len(updated), len(total))
 
   @classmethod
-  def getTestUpdateProcess(devices,jsVersion):
+  def getTestUpdateProcess(cls, devices,jsVersion):
     total = Record.objects.filter(deviceToken_in=devices)
     updated = total.filter(jsVersion=jsVersion)
     return (len(updated), len(total))
