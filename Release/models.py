@@ -83,7 +83,7 @@ class Release(models.Model):
         process = 0
         if total > 0:
           process = float(updated/total)
-        if process < release.grayScale:
+        if process <= release.grayScale:
           randomGrayscale = random.random()
           if randomGrayscale <= release.grayScale:
             return release
