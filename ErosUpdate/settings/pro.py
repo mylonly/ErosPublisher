@@ -10,7 +10,8 @@ DOWNLOAD_HOST = 'http://weexcdn.1234tv.com'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Weex',
-        'USER': 'root'
+        'NAME': 'weex',
+        'USER': 'root',
+        'PASSWORD': '1234tv.com'
     }
 }
