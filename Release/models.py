@@ -23,7 +23,7 @@ class Record(models.Model):
 
   @classmethod
   def getiOSUpdateProcess(cls,iOSVersion,appName,jsVersion):
-    total = Record.objects.filter(appPlatform='iOS', appVersion=ios_verion, appName=appName)
+    total = Record.objects.filter(appPlatform='iOS', appVersion=iOSVersion, appName=appName)
     updated = total.filter(jsVersion=jsVersion)
     return (len(updated), len(total))
 
