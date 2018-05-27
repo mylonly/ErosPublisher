@@ -80,7 +80,9 @@ class Release(models.Model):
         (Android_updated, Android_total) = Record.getAndroidUpdateProcess(release.android, release.appName, release.jsVersion)
         total = iOS_total + Android_total
         updated = iOS_updated + Android_updated
-        process = float(updated/total)
+        process = 0
+        if total > 0:
+          process = float(updated/total)
         if process < release.grayScale:
           randomGrayscale = random.random()
           if randomGrayscale <= release.grayScale:
