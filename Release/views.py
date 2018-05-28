@@ -21,7 +21,7 @@ class RecordList(generics.ListAPIView):
   serializer_class = RecrodSerializer
   filter_backends = (DjangoFilterBackend,OrderingFilter)
   filter_fields = '__all__'
-  ordering_fields = ('id', 'updatetime')
+  ordering_fields = ('id', 'updateTime')
   filter_class = RecordFilter
 
   def get(self, request, *args, **kwargs):

@@ -26,8 +26,8 @@ class RecordFilter(FilterSet):
       'appPlatform': ['exact'],
       'jsVersion': ['exact'],
       'appVersion': ['exact'],
+      'updateTime':['date__gte','date__lte'],
       'memo': ['exact','contains'],
-      'updateTime':['date__gte','date__lte']
     }
   
 
