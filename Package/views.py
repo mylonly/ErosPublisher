@@ -81,6 +81,8 @@ class PackageDelete(generics.GenericAPIView):
         package.delete()
         for release in releases:
           release.delete()
+        if default_storage.exists(package.jsMD5+'.zip'):
+          default_storage.delete(package.jsMD5+'.zip')
         return ErosResponse()
       except Package.DoesNotExist:
         return ErosResponse(status=ErosResponseStatus.NOT_FOUND)
