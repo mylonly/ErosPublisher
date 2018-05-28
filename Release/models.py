@@ -24,19 +24,19 @@ class Record(models.Model):
   @classmethod
   def getiOSUpdateProcess(cls,iOSVersion,appName,jsVersion):
     total = Record.objects.filter(appPlatform='iOS', appVersion=iOSVersion, appName=appName).count()
-    updated = total.filter(jsVersion=jsVersion).count()
+    updated = Record.objects.filter(appPlatform='iOS', appVersion=iOSVersion, appName=appName, jsVersion=jsVersion).count()
     return (updated, total)
 
   @classmethod
   def getAndroidUpdateProcess(cls,AndroidVersion, appName, jsVersion):
     total = Record.objects.filter(appPlatform='Android', appVersion=AndroidVersion, appName=appName).count()
-    updated = total.filter(jsVersion=jsVersion).count()
+    updated = Record.objects.filter(appPlatform='Android', appVersion=AndroidVersion, appName=appName, jsVersion=jsVersion).count()
     return (updated, total)
 
   @classmethod
   def getTestUpdateProcess(cls, devices,jsVersion):
     total = Record.objects.filter(deviceToken_in=devices).count()
-    updated = total.filter(jsVersion=jsVersion).count()
+    updated = Record.objects.filter(deviceToken_in=devices, jsVersion=jsVersion).count()
     return (updated, total)
 
   
