@@ -201,10 +201,9 @@ class CheckUpdate(generics.GenericAPIView):
       data['jsVersion'] = oldPackages[0].jsVersion
     release = Release.gotHit(data) #获取命中的更新包
     if not release:
+      self.updateRecord(data)  #更新记录
       return ErosResponse(status=ErosResponseStatus.IS_LASTEST_PACKAGE)
     data['updateJSVersion'] = release.jsVersion
-    
-
     self.updateRecord(data)  #更新记录
 
     try:
