@@ -12,6 +12,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'weex',
         'USER': 'root',
-        'PASSWORD': '1234TV.com'
+        'PASSWORD': '******'
     }
 }
