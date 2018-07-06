@@ -76,17 +76,17 @@ class Release(models.Model):
     for release in releases:
       if release.filterType == 0: #按灰度值来决定是否匹配
         ##TODO: 判断当前的更新率是否已经达到灰度值，如果达到，不再掷骰子
-        (iOS_updated, iOS_total) = Record.getiOSUpdateProcess(release.iOS,release.appName,release.jsVersion)
-        (Android_updated, Android_total) = Record.getAndroidUpdateProcess(release.android, release.appName, release.jsVersion)
-        total = iOS_total + Android_total
-        updated = iOS_updated + Android_updated
-        process = 0
-        if total > 0:
-          process = float(updated/total)
-        if process <= release.grayScale:
-          randomGrayscale = random.random()
-          if randomGrayscale <= release.grayScale:
-            return release
+        # (iOS_updated, iOS_total) = Record.getiOSUpdateProcess(release.iOS,release.appName,release.jsVersion)
+        # (Android_updated, Android_total) = Record.getAndroidUpdateProcess(release.android, release.appName, release.jsVersion)
+        # total = iOS_total + Android_total
+        # updated = iOS_updated + Android_updated
+        # process = 0
+        # if total > 0:
+        #   process = float(updated/total)
+        # if process <= release.grayScale:
+        randomGrayscale = random.random()
+        if randomGrayscale <= release.grayScale:
+          return release
       elif release.filterType == 1: #根据指定设备来匹配
         if release.deviceIDs.find(deviceToken) != -1:
           return release      
