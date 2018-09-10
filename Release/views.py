@@ -297,6 +297,9 @@ class CheckUpdate(generics.GenericAPIView):
     newZipName = newMD5 + '.zip'
     newZipPath = MEDIA_ROOT + newZipName
 
+    #TODO:客户端增量包有问题，暂时全部返回全量包
+    return (False, prefix + newZipName)
+
     #先判断diff文件存不存在,存在说明之前生成过这个增量包，直接返回
     exsit = os.path.isfile(diffZipPath) 
     if exsit:
