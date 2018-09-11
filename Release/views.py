@@ -193,6 +193,11 @@ class CheckUpdate(generics.GenericAPIView):
       if data['deviceToken'] is None:
         data['deviceToken'] = ip
         data['ip'] = ip
+    
+    ##TODO: 暂时安卓版本热更新遇到问题，暂时安卓不会受到更新提示
+    if (data['appPlatform'] == 'Android'):
+      return ErosResponse(status=ErosResponseStatus.IS_LASTEST_PACKAGE)
+
 
     appName = data['appName']
     jsMD5 = data['jsMD5']
