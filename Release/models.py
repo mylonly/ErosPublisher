@@ -75,7 +75,7 @@ class Release(models.Model):
       return None
     for release in releases:
       if release.filterType == 0: #按灰度值来决定是否匹配
-        ##TODO: 判断当前的更新率是否已经达到灰度值，如果达到，不再掷骰子
+        # ##TODO: 判断当前的更新率是否已经达到灰度值，如果达到，不再掷骰子
         # (iOS_updated, iOS_total) = Record.getiOSUpdateProcess(release.iOS,release.appName,release.jsVersion)
         # (Android_updated, Android_total) = Record.getAndroidUpdateProcess(release.android, release.appName, release.jsVersion)
         # total = iOS_total + Android_total

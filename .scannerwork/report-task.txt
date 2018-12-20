@@ -1,0 +1,6 @@
+projectKey=WeexUpdateBackend
+serverUrl=http://sonarqube.1234tv.lan
+serverVersion=7.4.0.18908
+dashboardUrl=http://sonarqube.1234tv.lan/dashboard?id=WeexUpdateBackend
+ceTaskId=AWfA4_vU6cVyha9vPwS4
+ceTaskUrl=http://sonarqube.1234tv.lan/api/ce/task?id=AWfA4_vU6cVyha9vPwS4

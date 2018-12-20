@@ -1,0 +1,39 @@
+stages:
+- xunit
+- analysis
+
+xunit:
+  stage: xunit
+  image: python:3.6-alpine3.8
+  before_script:
+    - pip3 install coverage
+    - pip3 install nose
+    - pip3 install -r requirement.txt
+  script:
+    - python3 manager.py test
+    - coverage xml
+
+sonarqube:
+  stage: analysis
+  image: ciricihq/gitlab-sonar-scanner
+  variables:
+    SONAR_URL: http://sonarqube.1234tv.lan
+    SONAR_ANALYSIS_MODE: issues
+  script:
+  - gitlab-sonar-scanner
+  except:
+    - master
+    - dev
+
+
+
+sonarqube-reports:
+  stage: analysis
+  image: ciricihq/gitlab-sonar-scanner
+  variables:
+    SONAR_URL: http://sonarqube.1234tv.lan
+    SONAR_ANALYSIS_MODE: publish
+  script:
+  - gitlab-sonar-scanner
+  only:
+  - dev

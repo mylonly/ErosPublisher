@@ -18,7 +18,7 @@ class login(views.APIView):
     
     username = request.data.get("username")
     password = request.data.get("password")
-
+    print(username+password)
     user = auth.authenticate(request, username=username, password=password)
     if user is not None:
       auth.login(request, user)

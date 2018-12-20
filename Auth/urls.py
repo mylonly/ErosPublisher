@@ -9,7 +9,7 @@ from django.urls import path
 from Auth.views import login,logout,profile
 
 urlpatterns = [
-  path('login',login.as_view()),
+  path('login',login.as_view(), name="Login"),
   path('logout',logout.as_view()),
   path('profile',profile.as_view())
 ]

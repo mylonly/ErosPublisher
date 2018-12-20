@@ -91,26 +91,24 @@ class PackageUpload(views.APIView):
   parser_classes = (MultiPartParser,)
   def post(self, request, *args, **kwargs):
 
+    file = request.FILES['file']
+
+    if default_storage.exists(file.name):
+      default_storage.delete(file.name)
+    default_storage.save(file.name, ContentFile(file.read()))
+    zfile = zipfile.ZipFile(MEDIA_ROOT+file.name)
+
+    md5File = zfile.open('md5.json')
+    jsonObj = json.loads(md5File.read().decode('utf-8'))
+
     try:
-      file = request.FILES['file']
-
-      if default_storage.exists(file.name):
-        default_storage.delete(file.name)
-      default_storage.save(file.name, ContentFile(file.read()))
-      zfile = zipfile.ZipFile(MEDIA_ROOT+file.name)
-      
-      
-
-      md5File = zfile.open('md5.json')
-      jsonObj = json.load(md5File)
-
       responseData = {
         "appName": jsonObj['appName'],
         "jsMD5": jsonObj['jsVersion'],
         "android": jsonObj['android'],
         "ios": jsonObj['iOS'],
         "timestamp": jsonObj['timestamp'],
-        "jsPath": 'http://'+request.get_host()+MEDIA_URL+file.name
+        "jsPath": 'https://'+request.get_host()+MEDIA_URL+file.name
       }
       zfile.close()
       return ErosResponse(data=responseData)

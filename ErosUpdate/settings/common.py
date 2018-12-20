@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders'
+    'corsheaders',
+    'django_nose'
 ]
 
 
@@ -140,7 +141,6 @@ CORS_ALLOW_HEADERS = (
     'Pragma',
     'set-cookie',
     'X-CSRFTOKEN'
-
 )
 
 REST_FRAMEWORK = {
@@ -158,3 +158,11 @@ REST_FRAMEWORK = {
 MEDIA_ROOT = "/data/media/"
 
 MEDIA_URL = "/media/"
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--with-xunit',
+    '--xunit-file=nosetests.xml'
+]

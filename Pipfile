@@ -10,6 +10,9 @@ django-cors-headers = "*"
 django-filter = "*"
 "bsdiff4" = "*"
 pymysql = "*"
+coverage = "*"
+nose = "*"
+django-nose = "*"
 
 [dev-packages]
 pylint = "*"
